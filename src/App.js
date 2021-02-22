@@ -1,14 +1,8 @@
-import {
-  Button,
-  Card,
-  Col,
-  Divider,
-  Input,
-  Row,
-  Space,
-  Typography,
-} from "antd";
+import { Button, Input, Space } from "antd";
 import styled from "styled-components";
+import { Fragment, useState } from "react";
+import Task from "./components/Task";
+import { TodoProvider } from "./context/TodoContext";
 
 const Container = styled.div`
   display: flex;
@@ -21,55 +15,46 @@ const Container = styled.div`
 `;
 
 function App() {
+  const [todos, setTodos] = useState([]);
+  const [taskName, setTaskName] = useState("");
+
+  const handleCreateTask = () => {
+    let newTodos = todos;
+    newTodos.push({
+      name: taskName,
+      isAllDone: false,
+      task: [],
+    });
+    setTodos([...newTodos]);
+  };
+
   return (
-    <Container>
-      <Space>
-        <Input style={{ width: 400 }} placeholder="Enter Task Name" />
-        <Button type="primary">Create Task</Button>
-      </Space>
-      <Space direction="vertical" style={{ marginTop: 24 }}>
-        <Card
-          title="Sample Task"
-          style={{ width: 600 }}
-          extra={
-            <>
-              <Button type="primary">Duplicate</Button>{" "}
-              <Button type="primary" danger>
-                Delete
-              </Button>
-            </>
-          }
-        >
-          <Space direction="vertical" style={{ width: "100%" }}>
-            <Space>
-              <Input placeholder="Enter Subtask Name" style={{ width: 400 }} />
-              <Button type="primary">Add Subtask</Button>
-            </Space>
-            <Divider />
-            <Row>
-              <Col span={16}>
-                <Typography.Text>Subtask Name (Todo)</Typography.Text>
-              </Col>
-              <Col span={8}>
-                <Button type="primary">Done</Button>{" "}
-                <Button type="danger">Delete</Button>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={16}>
-                <Typography.Text style={{ textDecoration: "line-through" }}>
-                  Subtask Name (Done)
-                </Typography.Text>
-              </Col>
-              <Col span={8}>
-                <Button type="primary">Undo</Button>{" "}
-                <Button type="danger">Delete</Button>
-              </Col>
-            </Row>
-          </Space>
-        </Card>
-      </Space>
-    </Container>
+    <TodoProvider
+      value={{
+        todos: todos,
+        setTodos: setTodos,
+      }}
+    >
+      <Container>
+        <Space>
+          <Input
+            value={taskName}
+            onChange={(e) => setTaskName(e.target.value)}
+            style={{ width: 400 }}
+            placeholder="Enter Task Name"
+          />
+          <Button type="primary" onClick={handleCreateTask}>
+            Create Task
+          </Button>
+        </Space>
+
+        {todos?.map((task, index) => (
+          <Fragment key={index}>
+            <Task id={index} />
+          </Fragment>
+        ))}
+      </Container>
+    </TodoProvider>
   );
 }
 
