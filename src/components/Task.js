@@ -16,8 +16,15 @@ const Task = ({ id }) => {
   };
 
   const handleDuplicate = () => {
-    let newTask = todos[id];
-    setTodos([...todos, { ...newTask }]);
+    const newSubTasks = todos[id].task.map((subtask) => {
+      return { ...subtask };
+    });
+    let newTask = {
+      name: todos[id].name,
+      isAllDone: false,
+      task: newSubTasks,
+    };
+    setTodos([...todos, newTask]);
   };
 
   const handleAddSubTask = () => {
